@@ -188,15 +188,16 @@ def load_progress():
 def get_current_status():
     today = datetime.now().date()
     start_date = st.session_state.start_date
-    days_passed = (today - start_date).days + 1  # +1 because Day 1 is the start date
-    
-    current_day = min(days_passed, 60)
+    days_passed = (today - start_date).days + 1  # can be 0 or negative
+
+    # FIX: Ensure current_day is always at least 1
+    current_day = max(1, min(days_passed, 60))
+
     is_overdue = days_passed > 60
-    
-    # Calculate overdue days
     overdue_days = max(0, days_passed - 60)
-    
+
     return current_day, is_overdue, overdue_days, days_passed
+
 
 # Handle task carry-over
 def handle_carry_over(current_day):
