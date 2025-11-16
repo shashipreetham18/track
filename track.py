@@ -237,10 +237,10 @@ def main():
         </div>
         """, unsafe_allow_html=True)
     
-    # Simple tab implementation
-    tab1, tab2 = st.tabs(["Today's Tasks", "View Other Days"])
+    # SIMPLE navigation without tabs that might cause issues
+    view_option = st.radio("What do you want to view?", ["Today's Tasks", "Other Day's Tasks"])
     
-    with tab1:
+    if view_option == "Today's Tasks":
         display_day_tasks(current_day, is_current_day=True, show_checkboxes=True)
         
         if st.session_state.carry_over:
@@ -251,13 +251,16 @@ def main():
                     for task in tasks:
                         st.write(f"🔁 {task}")
     
-    with tab2:
+    else:  # Other Day's Tasks
         st.subheader("View Tasks for Any Day")
         
-        # SIMPLE day selector - this should definitely work
-        day_options = [f"Day {i}" for i in range(1, 61)]
-        selected_day_str = st.selectbox("Choose a day:", day_options, index=current_day-1)
-        selected_day = int(selected_day_str.split()[1])
+        # ULTRA SIMPLE day selector - no index, no complex options
+        selected_day = st.number_input(
+            "Select Day (1-60):", 
+            min_value=1, 
+            max_value=60, 
+            value=current_day
+        )
         
         selected_date = st.session_state.start_date + timedelta(days=selected_day-1)
         st.write(f"**Date:** {selected_date.strftime('%B %d, %Y')}")
